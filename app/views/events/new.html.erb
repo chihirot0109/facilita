@@ -2,7 +2,7 @@
   <div class="new-event">
     <div class="event-create-form">
       <div class="new-project-card-meetup">
-        <% unless  @events.nil? || @events.empty? %>
+        <% if @events.present? %>
           <h2 class="text-space-around">Your events on MeetUp.com</h2>
           <% @events.each_with_index do |event, index| %>
             <div class="user-events-meetup">

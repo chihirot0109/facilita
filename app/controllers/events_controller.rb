@@ -16,10 +16,14 @@ class EventsController < ApplicationController
   def new
     @event = Event.new
     authorize Event
-    unless current_or_guest_user.organization == nil
+    if current_or_guest_user.organization.present?
       url = "https://api.meetup.com/#{current_or_guest_user.organization}/events?&sign=true&photo-host=public&page=20"
-      events_serialized = open(url).read
-      @events = JSON.parse(events_serialized)
+      if url_valid?(url)
+        events_serialized = open(url).read
+        @events = JSON.parse(events_serialized)
+      else
+        @events = nil
+      end
     end
   end
 
@@ -60,5 +64,9 @@ class EventsController < ApplicationController
 
   def event_params
     params.require(:event).permit(:title, :description, :start_time, :end_time, :photo, :location)
+  end
+
+  def url_valid?(url)
+    url = URI.parse(url) rescue false
   end
 end
